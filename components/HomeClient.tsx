@@ -81,7 +81,6 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
         audioRef.current = null;
       }
       const audio = new Audio(previewUrl);
-      audio.crossOrigin = 'anonymous'; // Diperlukan untuk CORS CDN Deezer
       audio.onended = () => setIsPlaying(false);
       audioRef.current = audio;
     }
