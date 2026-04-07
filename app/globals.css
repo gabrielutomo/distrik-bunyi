@@ -1,26 +1,117 @@
 @import "tailwindcss";
 
+/* ── Base ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: #080808;
+  color: #f0f0f0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── CSS Variables ──────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --indie: #c8ff00;
+  --rap:   #ff2d6b;
+  --alt:   #9b5cf6;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 9999px; }
+
+/* ── Animations ─────────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.fade-up   { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+.fade-up-1 { animation: fadeUp 0.5s 0.1s cubic-bezier(0.22,1,0.36,1) both; }
+.fade-up-2 { animation: fadeUp 0.5s 0.2s cubic-bezier(0.22,1,0.36,1) both; }
+.fade-up-3 { animation: fadeUp 0.5s 0.3s cubic-bezier(0.22,1,0.36,1) both; }
+.live-dot  { animation: pulseDot 1.4s ease-in-out infinite; }
+
+/* ── Selection ──────────────────────────────────────────────────────────── */
+::selection { background: var(--indie); color: #000; }
+
+/* ── Responsive Layout ──────────────────────────────────────────────────── */
+
+/* Two-column main grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 64px;
+  align-items: start;
+}
+
+/* Hero intro row */
+.hero-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+/* Spotify player container */
+.spotify-container {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Mobile hamburger hidden on desktop */
+.mobile-menu-btn { display: none !important; }
+
+/* ── Mobile breakpoint (≤ 768px) ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Show hamburger, hide desktop nav */
+  .desktop-nav { display: none !important; }
+  .mobile-menu-btn { display: block !important; }
+
+  /* Single column layout */
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  /* Sidebar not sticky on mobile */
+  .main-grid > section:last-child {
+    position: static !important;
+  }
+
+  /* Hero: stacked on mobile */
+  .hero-intro {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Spotify full width on mobile */
+  .spotify-container {
+    max-width: 100%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── Tablet breakpoint (769px – 1024px) ─────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .main-grid {
+    grid-template-columns: 1fr 280px;
+    gap: 40px;
+  }
+}
+
+
+@keyframes progress {
+  from { width: 0%; }
+  to { width: 100%; }
 }
