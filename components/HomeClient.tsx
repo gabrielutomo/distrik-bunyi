@@ -68,8 +68,9 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
     const rawUrl = listenNowData?.preview;
     if (!rawUrl) return;
 
-    // Force HTTPS agar tidak diblokir browser sebagai mixed-content
-    const previewUrl = rawUrl.replace(/^http:\/\//i, 'https://');
+    // Proxy audio melalui API route kita sendiri agar tidak kena restriksi CDN Deezer
+    const httpsUrl = rawUrl.replace(/^http:\/\//i, 'https://');
+    const previewUrl = `/api/preview?url=${encodeURIComponent(httpsUrl)}`;
 
     // Buat audio baru jika belum ada atau lagu berbeda
     const currentSrc = audioRef.current?.src ?? '';
