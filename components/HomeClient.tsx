@@ -65,23 +65,24 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
   const accent = activeGenre ? genreAccent[activeGenre] : 'rgba(255,255,255,0.15)';
 
   const togglePlay = () => {
-    const rawUrl = listenNowData?.preview;
-    if (!rawUrl) return;
+    if (!listenNowData?.id) return;
 
-    // Proxy audio melalui API route kita sendiri agar tidak kena restriksi CDN Deezer
-    const httpsUrl = rawUrl.replace(/^http:\/\//i, 'https://');
-    const previewUrl = `/api/preview?url=${encodeURIComponent(httpsUrl)}`;
+    // Gunakan redirect proxy dengan memberikan ID track! 
+    // Proxy akan mengambil URL preview fresh dari API Deezer dan me-redirect browser.
+    const previewUrl = `/api/preview?id=${listenNowData.id}`;
 
     // Buat audio baru jika belum ada atau lagu berbeda
     const currentSrc = audioRef.current?.src ?? '';
-    const normalizedSrc = currentSrc.replace(/^http:\/\//i, 'https://');
 
-    if (normalizedSrc !== previewUrl) {
+    // Karena audio.src berisi absolute URL (http://localhost:3000/api/preview?id=...), 
+    // kita cukup mengecek apakah currentSrc memuat "id=<ID_LAGU>".
+    if (!currentSrc.includes(`id=${listenNowData.id}`)) {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
       }
       const audio = new Audio(previewUrl);
+      // JANGAN gunakan audio.crossOrigin = 'anonymous' karena Deezer CDN sekarang memblokirnya.
       audio.onended = () => setIsPlaying(false);
       audioRef.current = audio;
     }
