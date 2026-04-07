@@ -71,19 +71,19 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
     // Force HTTPS agar tidak diblokir browser sebagai mixed-content
     const previewUrl = rawUrl.replace(/^http:\/\//i, 'https://');
 
-    // Jika ganti lagu (URL berubah) atau objek audio belum ada, buat baru
-    if (!audioRef.current || !audioRef.current.src.includes(listenNowData?.id?.toString() ?? '')) {
-      const currentSrc = audioRef.current?.src ?? '';
-      const normalizedSrc = currentSrc.replace(/^http:\/\//i, 'https://');
-      if (normalizedSrc !== previewUrl) {
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current = null;
-        }
-        const audio = new Audio(previewUrl);
-        audio.onended = () => setIsPlaying(false);
-        audioRef.current = audio;
+    // Buat audio baru jika belum ada atau lagu berbeda
+    const currentSrc = audioRef.current?.src ?? '';
+    const normalizedSrc = currentSrc.replace(/^http:\/\//i, 'https://');
+
+    if (normalizedSrc !== previewUrl) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
       }
+      const audio = new Audio(previewUrl);
+      audio.crossOrigin = 'anonymous'; // Diperlukan untuk CORS CDN Deezer
+      audio.onended = () => setIsPlaying(false);
+      audioRef.current = audio;
     }
 
     const currentAudio = audioRef.current;
