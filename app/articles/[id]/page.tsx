@@ -59,14 +59,13 @@ export default async function ArticlePage({
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', gap: 16 }}>
           <Link
             href="/"
+            className="back-nav-link"
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
               color: 'rgba(255,255,255,0.45)', textDecoration: 'none',
               fontSize: 12, fontWeight: 700, letterSpacing: '0.08em',
               transition: 'color 0.2s',
             }}
-            onMouseOver={e => (e.currentTarget.style.color = '#fff')}
-            onMouseOut={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
           >
             ← DISTRIK BUNYI
           </Link>
@@ -237,22 +236,17 @@ export default async function ArticlePage({
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {related.map(rel => (
                   <Link key={rel.id} href={`/articles/${rel.id}`} style={{ textDecoration: 'none' }}>
-                    <div style={{
-                      padding: '14px 16px',
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      borderRadius: 10,
-                      cursor: 'pointer',
-                      transition: 'border-color 0.2s, background 0.2s',
-                    }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLElement).style.borderColor = `${accent}40`;
-                        (e.currentTarget as HTMLElement).style.background = `rgba(255,255,255,0.07)`;
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
-                        (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
-                      }}
+                    <div 
+                      className="related-article-card"
+                      style={{
+                        padding: '14px 16px',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: 10,
+                        cursor: 'pointer',
+                        transition: 'border-color 0.2s, background 0.2s',
+                        '--hover-border': `${accent}40`,
+                      } as React.CSSProperties}
                     >
                       <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.4, marginBottom: 6 }}>
                         {rel.title}

@@ -115,3 +115,13 @@ body {
   from { width: 0%; }
   to { width: 100%; }
 }
+
+/* ── Interactive Hovers (Server Component Pages) ───────────── */
+.back-nav-link:hover {
+  color: #fff !important;
+}
+
+.related-article-card:hover {
+  border-color: var(--hover-border) !important;
+  background: rgba(255,255,255,0.07) !important;
+}
