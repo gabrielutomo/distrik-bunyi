@@ -2,6 +2,8 @@ import { getNewReleasesDeezer } from '@/lib/deezer';
 import { getArticles, getWeeklyReleases, getUnderratedAlbums } from '@/lib/queries';
 import HomeClient from '@/components/HomeClient';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
   // Fetch semua data secara paralel
   const [deezerReleases, articles, weeklyReleases, underratedAlbums] = await Promise.all([

@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { genreAccent } from '@/lib/data';
 import ArticleClient from './ArticleClient'; // We will create this for client-side view counting and markdown
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({
   params,
 }: {
