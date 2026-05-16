@@ -17,18 +17,27 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
         overflow: 'hidden',
         background: article.imageColor,
         border: '1px solid rgba(255,255,255,0.08)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
       }}
     >
+      {/* Background Image */}
+      {article.imageUrl && (
+        <img src={article.imageUrl} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, zIndex: 0 }} />
+      )}
       {/* Overlay gradient */}
       <div style={{
         position: 'absolute', inset: 0,
         background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)',
+        zIndex: 0,
       }} />
 
       {/* Content */}
       <div style={{
-        position: 'absolute', inset: 0,
-        display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+        position: 'relative',
+        zIndex: 1,
+        display: 'flex', flexDirection: 'column',
         padding: 'clamp(24px, 4vw, 48px)',
         gap: 20,
       }}>

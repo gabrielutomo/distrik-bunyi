@@ -7,10 +7,8 @@ import ArticleCard from '@/components/ArticleCard';
 import FeaturedArticle from '@/components/FeaturedArticle';
 import WeeklyReleases from '@/components/WeeklyReleases';
 import UnderratedSection from '@/components/UnderratedSection';
-import {
-  articles, underratedAlbums,
-  Genre, genreAccent,
-} from '@/lib/data';
+import LocalReleasesSection from '@/components/LocalReleasesSection';
+import { Genre, genreAccent, Article, Release, Album } from '@/lib/data';
 import { DeezerRelease } from '@/lib/deezer';
 
 const genreLabel: Record<string, { title: string; sub: string }> = {
@@ -21,9 +19,12 @@ const genreLabel: Record<string, { title: string; sub: string }> = {
 
 interface HomeClientProps {
   deezerReleases: DeezerRelease[];
+  articles: Article[];
+  weeklyReleases: Release[];
+  underratedAlbums: Album[];
 }
 
-export default function HomeClient({ deezerReleases }: HomeClientProps) {
+export default function HomeClient({ deezerReleases, articles, weeklyReleases, underratedAlbums }: HomeClientProps) {
   const [activeGenre, setActiveGenre] = useState<Genre | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -45,8 +46,8 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
     }
   }, [activeGenre]);
 
-  const filteredArticles = useMemo(() => !activeGenre ? articles : articles.filter(a => a.genre === activeGenre), [activeGenre]);
-  const filteredUnderrated = useMemo(() => !activeGenre ? underratedAlbums : underratedAlbums.filter(a => a.genre === activeGenre), [activeGenre]);
+  const filteredArticles = useMemo(() => !activeGenre ? articles : articles.filter(a => a.genre === activeGenre), [activeGenre, articles]);
+  const filteredUnderrated = useMemo(() => !activeGenre ? underratedAlbums : underratedAlbums.filter(a => a.genre === activeGenre), [activeGenre, underratedAlbums]);
 
   // Filter rilisan Deezer berdasarkan genre aktif (semua genre default)
   const filteredReleases = useMemo(() =>
@@ -54,6 +55,13 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
       ? deezerReleases
       : deezerReleases.filter(r => r.genre === activeGenre),
     [activeGenre, deezerReleases]
+  );
+
+  const filteredLocalReleases = useMemo(() => 
+    !activeGenre 
+      ? weeklyReleases 
+      : weeklyReleases.filter(r => r.genre === activeGenre), 
+    [activeGenre, weeklyReleases]
   );
 
   const featured = useMemo(() => filteredArticles.find(a => a.featured) ?? filteredArticles[0], [filteredArticles]);
@@ -108,6 +116,9 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
 
   return (
     <div style={{ background: '#080808', minHeight: '100vh', color: '#f0f0f0', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      {/* Film Grain overlay */}
+      <div className="film-grain" />
+
       {/* Ambient background glow */}
       {activeGenre && (
         <div
@@ -123,13 +134,40 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
 
       <Header activeGenre={activeGenre} onGenreChange={g => setActiveGenre(g as Genre | null)} />
 
+      <style dangerouslySetInnerHTML={{__html: `
+        .film-grain {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          z-index: 50;
+          pointer-events: none;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+          opacity: 0.03;
+        }
+        @keyframes eq {
+          0%, 100% { transform: scaleY(0.2); }
+          50% { transform: scaleY(1); }
+        }
+        .eq-bar {
+          width: 3px;
+          height: 12px;
+          background-color: currentColor;
+          display: inline-block;
+          transform-origin: bottom;
+          animation: eq 1.2s ease-in-out infinite;
+        }
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+        .eq-bar:nth-child(4) { animation-delay: 0.6s; }
+      `}} />
+
+
       <main style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px', display: 'flex', flexDirection: 'column', gap: 80, position: 'relative', zIndex: 1 }}>
 
         {/* ── Hero banner ── */}
         <div className="fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
           <div className="hero-intro">
             <div>
-              <h1 style={{ fontWeight: 900, fontSize: 'clamp(38px, 8vw, 90px)', letterSpacing: '-0.05em', lineHeight: 0.9, color: '#fff', textTransform: 'uppercase', marginBottom: 20 }}>
+              <h1 style={{ fontWeight: 900, fontSize: 'clamp(38px, 8vw, 90px)', letterSpacing: '-0.05em', lineHeight: 1, color: '#fff', textTransform: 'uppercase', marginBottom: 20 }}>
                 {activeGenre ? genreLabel[activeGenre].title : 'DISTRIK BUNYI'}
               </h1>
               <p style={{ fontSize: 'clamp(14px, 2vw, 18px)', color: 'rgba(255,255,255,0.5)', fontWeight: 500, maxWidth: 600, lineHeight: 1.5 }}>
@@ -171,9 +209,19 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
                     style={{ borderRadius: 6, objectFit: 'cover' }}
                   />
                   <div style={{ flex: 1, overflow: 'hidden' }}>
-                    <p style={{ fontSize: 10, color: genreAccent[listenNowData.genre as Genre] || '#fff', fontWeight: 800, textTransform: 'uppercase', marginBottom: 6, letterSpacing: '0.1em' }}>
-                      {isPlaying ? 'NOW PLAYING' : 'CLICK TO PREVIEW'}
-                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                      {isPlaying && (
+                        <div style={{ display: 'flex', gap: 2, color: genreAccent[listenNowData.genre as Genre] || '#fff' }}>
+                          <span className="eq-bar"></span>
+                          <span className="eq-bar"></span>
+                          <span className="eq-bar"></span>
+                          <span className="eq-bar"></span>
+                        </div>
+                      )}
+                      <p style={{ fontSize: 10, color: genreAccent[listenNowData.genre as Genre] || '#fff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        {isPlaying ? 'NOW PLAYING' : 'CLICK TO PREVIEW'}
+                      </p>
+                    </div>
                     <h4 style={{ fontSize: 15, color: '#fff', fontWeight: 700, marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {listenNowData.title}
                     </h4>
@@ -235,6 +283,11 @@ export default function HomeClient({ deezerReleases }: HomeClientProps) {
           <section className="fade-up-2" style={{ position: 'sticky', top: 88 }}>
             <WeeklyReleases releases={filteredReleases} />
           </section>
+        </div>
+
+        {/* ── Rilisan Lokal / CMS ── */}
+        <div className="fade-up-3">
+          <LocalReleasesSection releases={filteredLocalReleases} />
         </div>
 
         {/* ── Underrated ── */}

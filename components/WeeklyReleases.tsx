@@ -23,19 +23,17 @@ export default function WeeklyReleases({ releases }: WeeklyReleasesProps) {
         {releases.map((r, i) => {
           const accent = genreAccent[r.genre] ?? '#fff';
           return (
-            <a
+            <div
               key={r.id}
-              href={r.url}
-              target="_blank"
-              rel="noopener noreferrer"
               style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '12px 14px', borderRadius: 10, cursor: 'pointer',
-                transition: 'background 0.2s', textDecoration: 'none'
+                display: 'flex', flexDirection: 'column', gap: 12,
+                padding: '12px 14px', borderRadius: 10,
+                background: 'transparent', transition: 'background 0.2s'
               }}
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
               {/* Number */}
               <span style={{ fontSize: 11, fontWeight: 800, color: 'rgba(255,255,255,0.2)', minWidth: 18, textAlign: 'right' }}>
                 {String(i + 1).padStart(2, '0')}
@@ -71,7 +69,15 @@ export default function WeeklyReleases({ releases }: WeeklyReleasesProps) {
               }}>
                 {r.type.toUpperCase()}
               </span>
-            </a>
+              </div>
+              
+              {/* Deezer Widget if deezerId exists */}
+              {(r as any).deezerId && (
+                <div style={{ borderRadius: 8, overflow: 'hidden' }}>
+                  <iframe title={`deezer-${r.id}`} src={`https://widget.deezer.com/widget/dark/track/${(r as any).deezerId}`} width="100%" height="90" frameBorder="0" allowTransparency={true} allow="encrypted-media; clipboard-write"></iframe>
+                </div>
+              )}
+            </div>
           );
         })}
       </div>

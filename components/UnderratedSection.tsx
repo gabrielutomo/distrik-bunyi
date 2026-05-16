@@ -47,8 +47,13 @@ export default function UnderratedSection({ albums }: UnderratedSectionProps) {
             >
               {/* Album art */}
               <div style={{ width: '100%', aspectRatio: '1/1', background: album.imageColor, position: 'relative' }}>
+                {album.imageUrl && (
+                  <img src={album.imageUrl} alt={album.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
+                )}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 40%)' }} />
+                
                 {/* Rating overlay */}
-                <div style={{ position: 'absolute', bottom: 10, right: 12 }}>
+                <div style={{ position: 'absolute', bottom: 10, right: 12, zIndex: 10 }}>
                   <span style={{ fontWeight: 900, fontSize: 24, color: '#fff', letterSpacing: '-0.03em', opacity: 0.9 }}>
                     {album.rating}
                   </span>
@@ -68,9 +73,14 @@ export default function UnderratedSection({ albums }: UnderratedSectionProps) {
                 <p style={{ fontSize: 11, fontWeight: 700, color: accent, letterSpacing: '0.05em', marginBottom: 12 }}>
                   {album.artist.toUpperCase()}
                 </p>
-                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, fontStyle: 'italic' }}>
+                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, fontStyle: 'italic', marginBottom: (album as any).deezerId ? 16 : 0 }}>
                   &quot;{album.why}&quot;
                 </p>
+                {(album as any).deezerId && (
+                  <div style={{ borderRadius: 8, overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+                    <iframe title={`deezer-${album.id}`} src={`https://widget.deezer.com/widget/dark/track/${(album as any).deezerId}`} width="100%" height="90" frameBorder="0" allowTransparency={true} allow="encrypted-media; clipboard-write"></iframe>
+                  </div>
+                )}
               </div>
             </div>
           );

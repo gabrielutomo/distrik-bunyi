@@ -1,12 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { articles, genreAccent } from '@/lib/data';
 import type { Metadata } from 'next';
-
-export async function generateStaticParams() {
-  return articles.map(a => ({ id: a.id }));
-}
+import { supabase } from '@/lib/supabase';
+import { genreAccent } from '@/lib/data';
+import ArticleClient from './ArticleClient'; // We will create this for client-side view counting and markdown
 
 export async function generateMetadata({
   params,
@@ -14,7 +12,8 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const article = articles.find(a => a.id === id);
+  const { data: article } = await supabase.from('articles').select('*').eq('id', id).single();
+  
   if (!article) return { title: 'Artikel tidak ditemukan' };
   return {
     title: `${article.title} — Distrik Bunyi`,
@@ -34,20 +33,24 @@ export default async function ArticlePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const article = articles.find(a => a.id === id);
+  
+  // Fetch from Supabase
+  const { data: article, error } = await supabase.from('articles').select('*').eq('id', id).single();
 
-  if (!article) notFound();
+  if (error || !article) notFound();
 
-  const accent = genreAccent[article.genre] ?? '#fff';
+  // Fetch related
+  const { data: related } = await supabase
+    .from('articles')
+    .select('id, title, date, read_time')
+    .eq('genre', article.genre)
+    .neq('id', id)
+    .limit(3);
 
-  // Related articles: same genre, excluding current
-  const related = articles
-    .filter(a => a.genre === article.genre && a.id !== article.id)
-    .slice(0, 3);
+  const accent = genreAccent[article.genre as keyof typeof genreAccent] ?? '#fff';
 
   return (
     <div style={{ background: '#080808', minHeight: '100vh', color: '#f0f0f0', fontFamily: 'Inter, system-ui, sans-serif' }}>
-
       {/* Back nav */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
@@ -59,7 +62,6 @@ export default async function ArticlePage({
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', gap: 16 }}>
           <Link
             href="/"
-            className="back-nav-link"
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
               color: 'rgba(255,255,255,0.45)', textDecoration: 'none',
@@ -90,9 +92,12 @@ export default async function ArticlePage({
       <div style={{
         width: '100%',
         minHeight: 'clamp(320px, 50vw, 560px)',
-        background: article.imageColor,
+        background: article.image_color,
         position: 'relative',
       }}>
+        {article.image_url && (
+          <img src={article.image_url} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
+        )}
         {/* Overlay */}
         <div style={{
           position: 'absolute', inset: 0,
@@ -141,83 +146,30 @@ export default async function ArticlePage({
               oleh <span style={{ color: accent }}>{article.author}</span>
             </span>
             <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontWeight: 600 }}>
-              {article.readTime} MIN READ
+              {article.read_time} MIN READ
             </span>
           </div>
         </div>
       </div>
 
-      {/* Article body */}
       <main style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 24px', display: 'grid', gridTemplateColumns: 'minmax(0,680px) 1fr', gap: 80 }}>
-
-        {/* Content */}
-        <article>
-          {/* Excerpt / lead */}
-          <p style={{
-            fontSize: 'clamp(17px, 2vw, 21px)',
-            fontWeight: 400,
-            lineHeight: 1.75,
-            color: 'rgba(255,255,255,0.75)',
-            borderLeft: `3px solid ${accent}`,
-            paddingLeft: 20,
-            marginBottom: 48,
-            fontStyle: 'italic',
-          }}>
-            {article.excerpt}
-          </p>
-
-          {/* Simulated article body paragraphs */}
-          {[
-            `Musik Indonesia terus berkembang dengan berbagai warna dan nuansa baru. Dalam konteks ini, karya yang tengah kita bicarakan menjadi salah satu bukti nyata bahwa scene lokal sudah jauh melampaui ekspektasi banyak orang.`,
-            `Setiap detail dalam karya ini dirancang dengan teliti. Dari pilihan instrumen hingga aransemen yang tidak terburu-buru, semuanya mencerminkan kematangan artistik yang jarang ditemukan di rilisan mainstream Indonesia saat ini.`,
-            `Yang membuat ini menarik bukan hanya kualitas produksinya, tapi juga keberanian untuk tidak mengikuti tren. Di tengah banjir rilisan yang terdengar serupa, karya seperti ini menjadi oase — sesuatu yang benar-benar punya identitas sendiri.`,
-            `Bagi mereka yang belum mendengarnya, inilah saat yang tepat. Dan bagi yang sudah familiar, ada banyak hal baru untuk ditemukan di setiap putaran.`,
-          ].map((para, i) => (
-            <p key={i} style={{
-              fontSize: 16,
-              lineHeight: 1.85,
-              color: 'rgba(255,255,255,0.6)',
-              marginBottom: 28,
-            }}>
-              {para}
-            </p>
-          ))}
-
-          {/* Tags */}
-          <div style={{ marginTop: 48, paddingTop: 32, borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {article.tags.map(tag => (
-              <span key={tag} style={{
-                fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
-                padding: '5px 12px', borderRadius: 6,
-                background: `${accent}15`, color: accent,
-                border: `1px solid ${accent}30`,
-              }}>
-                #{tag}
-              </span>
-            ))}
-          </div>
-        </article>
+        
+        {/* Client Component for Markdown & Views */}
+        <ArticleClient 
+          id={article.id} 
+          content={article.content} 
+          excerpt={article.excerpt} 
+          accent={accent}
+          tags={article.tags}
+          deezerId={article.deezer_id}
+        />
 
         {/* Sidebar */}
         <aside style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
-          {/* Author card */}
-          <div style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 16,
-            padding: 24,
-          }}>
-            <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>
-              PENULIS
-            </p>
+          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 24 }}>
+            <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>PENULIS</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div style={{
-                width: 48, height: 48, borderRadius: '50%',
-                background: `linear-gradient(135deg, ${accent}40, ${accent}10)`,
-                border: `1px solid ${accent}40`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 18, fontWeight: 900, color: accent,
-              }}>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: `linear-gradient(135deg, ${accent}40, ${accent}10)`, border: `1px solid ${accent}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 900, color: accent }}>
                 {article.author.charAt(0)}
               </div>
               <div>
@@ -227,33 +179,15 @@ export default async function ArticlePage({
             </div>
           </div>
 
-          {/* Related articles */}
-          {related.length > 0 && (
+          {related && related.length > 0 && (
             <div>
-              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>
-                ARTIKEL TERKAIT
-              </p>
+              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>ARTIKEL TERKAIT</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {related.map(rel => (
                   <Link key={rel.id} href={`/articles/${rel.id}`} style={{ textDecoration: 'none' }}>
-                    <div 
-                      className="related-article-card"
-                      style={{
-                        padding: '14px 16px',
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: 10,
-                        cursor: 'pointer',
-                        transition: 'border-color 0.2s, background 0.2s',
-                        '--hover-border': `${accent}40`,
-                      } as React.CSSProperties}
-                    >
-                      <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.4, marginBottom: 6 }}>
-                        {rel.title}
-                      </p>
-                      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>
-                        {rel.date} · {rel.readTime} min read
-                      </p>
+                    <div style={{ padding: '14px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10 }}>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.4, marginBottom: 6 }}>{rel.title}</p>
+                      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{rel.date} · {rel.read_time} min read</p>
                     </div>
                   </Link>
                 ))}
@@ -263,14 +197,9 @@ export default async function ArticlePage({
         </aside>
       </main>
 
-      {/* Footer */}
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '40px 24px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.04em', color: '#fff', cursor: 'pointer' }}>
-              DISTRIK BUNYI
-            </span>
-          </Link>
+          <Link href="/" style={{ textDecoration: 'none' }}><span style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.04em', color: '#fff' }}>DISTRIK BUNYI</span></Link>
           <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)', fontWeight: 600 }}>STAY LOUD, STAY ARCHIVED.</span>
         </div>
       </footer>

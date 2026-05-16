@@ -37,9 +37,14 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
         }}
       >
-        {/* Image placeholder */}
+        {/* Image or gradient placeholder */}
         <div style={{ width: '100%', aspectRatio: '16/9', background: article.imageColor, position: 'relative' }}>
-          <div style={{ position: 'absolute', bottom: 12, left: 12, display: 'flex', gap: 6 }}>
+          {article.imageUrl && (
+            <img src={article.imageUrl} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
+          )}
+          {/* Gradient overlay for readability */}
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)' }} />
+          <div style={{ position: 'absolute', bottom: 12, left: 12, display: 'flex', gap: 6, zIndex: 10 }}>
             <span style={{
               background: accent,
               color: '#000',
@@ -77,7 +82,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: 16 }}>
             {article.excerpt}
           </p>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14 }}>
             <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>
               {article.author.toUpperCase()}
             </span>

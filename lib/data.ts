@@ -11,12 +11,16 @@ export interface Article {
   id: string;
   title: string;
   excerpt: string;
+  content?: string;
   type: ArticleType;
   genre: Genre;
   author: string;
   date: string;
   readTime: number;
   imageColor: string; // gradient for placeholder
+  imageUrl?: string;
+  deezerId?: string;
+  viewCount?: number;
   featured?: boolean;
   tags: string[];
 }
@@ -29,6 +33,8 @@ export interface Release {
   genre: Genre;
   releaseDate: string;
   imageColor: string;
+  imageUrl?: string;
+  deezerId?: string;
   tags: string[];
 }
 
@@ -39,6 +45,8 @@ export interface Album {
   year: number;
   genre: Genre;
   imageColor: string;
+  imageUrl?: string;
+  deezerId?: string;
   why: string;
   rating: number; // out of 10
   tags: string[];
