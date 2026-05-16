@@ -79,11 +79,11 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', marginBottom: 10 }}>
             {article.date}
           </p>
-          <h3 style={{ fontSize: 17, fontWeight: 800, lineHeight: 1.35, color: '#fff', marginBottom: 10, letterSpacing: '-0.02em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {article.title}
+          <h3 style={{ fontSize: 17, fontWeight: 800, lineHeight: 1.35, color: '#fff', marginBottom: 10, letterSpacing: '-0.02em', minHeight: 46 }}>
+            {article.title.length > 60 ? article.title.substring(0, 60) + '...' : article.title}
           </h3>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: 16, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {article.excerpt}
+          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: 16, flex: 1 }}>
+            {article.excerpt.length > 130 ? article.excerpt.substring(0, 130) + '...' : article.excerpt}
           </p>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14, marginTop: 'auto' }}>
             <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>
