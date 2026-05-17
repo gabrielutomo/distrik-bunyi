@@ -8,6 +8,7 @@ import FeaturedArticle from '@/components/FeaturedArticle';
 import WeeklyReleases from '@/components/WeeklyReleases';
 import UnderratedSection from '@/components/UnderratedSection';
 import LocalReleasesSection from '@/components/LocalReleasesSection';
+import SplashScreen from '@/components/SplashScreen';
 import { Genre, genreAccent, Article, Release, Album } from '@/lib/data';
 import { DeezerRelease } from '@/lib/deezer';
 
@@ -116,6 +117,9 @@ export default function HomeClient({ deezerReleases, articles, weeklyReleases, u
 
   return (
     <div style={{ background: '#080808', minHeight: '100vh', color: '#f0f0f0', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      {/* Splash Screen */}
+      <SplashScreen />
+
       {/* Film Grain overlay */}
       <div className="film-grain" />
 
@@ -269,7 +273,7 @@ export default function HomeClient({ deezerReleases, articles, weeklyReleases, u
               </h2>
               <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20, alignItems: 'stretch' }}>
               {latestArticles.map(a => <ArticleCard key={a.id} article={a} />)}
               {latestArticles.length === 0 && !featured && (
                 <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: 80, color: 'rgba(255,255,255,0.2)', fontStyle: 'italic' }}>

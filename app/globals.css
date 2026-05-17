@@ -4,19 +4,42 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
+/* ── Theme Variables ─────────────────────────────────────────────────── */
+:root {
+  --indie: #c8ff00;
+  --rap:   #ff2d6b;
+  --alt:   #9b5cf6;
+
+  /* Dark mode (default) */
+  --bg-primary: #080808;
+  --bg-secondary: #1A1A1A;
+  --bg-card: #141414;
+  --text-primary: #F5F5F5;
+  --text-secondary: #999999;
+  --text-muted: #555555;
+  --accent: #C8FF00;
+  --accent-alt: #FF3D00;
+  --border: rgba(255,255,255,0.08);
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #F0EDE6;
+  --bg-secondary: #E8E4DC;
+  --bg-card: #ECEAE3;
+  --text-primary: #1A1814;
+  --text-secondary: #5C5750;
+  --text-muted: #A09890;
+  --accent: #1A1814;
+  --accent-alt: #C8320A;
+  --border: rgba(26,24,20,0.10);
+}
+
 body {
   background: #080808;
   color: #f0f0f0;
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-}
-
-/* ── CSS Variables ──────────────────────────────────────────────────────── */
-:root {
-  --indie: #c8ff00;
-  --rap:   #ff2d6b;
-  --alt:   #9b5cf6;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
@@ -33,6 +56,18 @@ body {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
 }
+@keyframes progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes eq {
+  0%, 100% { transform: scaleY(0.2); }
+  50% { transform: scaleY(1); }
+}
 
 .fade-up   { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
 .fade-up-1 { animation: fadeUp 0.5s 0.1s cubic-bezier(0.22,1,0.36,1) both; }
@@ -43,7 +78,7 @@ body {
 /* ── Selection ──────────────────────────────────────────────────────────── */
 ::selection { background: var(--indie); color: #000; }
 
-/* ── Skena / Brutalist Effects ──────────────────────────────────────────── */
+/* ── Film Grain ─────────────────────────────────────────────────────────── */
 .film-grain {
   position: fixed;
   inset: 0;
@@ -53,11 +88,7 @@ body {
   opacity: 0.04;
 }
 
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
+/* ── Marquee ──────────────────────────────────────────────────────────── */
 .marquee-container {
   overflow: hidden;
   white-space: nowrap;
@@ -72,21 +103,15 @@ body {
   border-top: 1px solid rgba(0,0,0,0.1);
   border-bottom: 1px solid rgba(0,0,0,0.1);
 }
-
 .marquee-content {
   display: flex;
   animation: marquee 20s linear infinite;
 }
-
 .marquee-content span {
   padding: 0 4vw;
 }
 
-@keyframes eq {
-  0%, 100% { transform: scaleY(0.2); }
-  50% { transform: scaleY(1); }
-}
-
+/* ── Equalizer bars ──────────────────────────────────────────────────── */
 .eq-bar {
   width: 3px;
   height: 12px;
@@ -99,9 +124,15 @@ body {
 .eq-bar:nth-child(3) { animation-delay: 0.4s; }
 .eq-bar:nth-child(4) { animation-delay: 0.6s; }
 
-/* ── Responsive Layout ──────────────────────────────────────────────────── */
+/* ── News Card Grid — consistent height ──────────────────────────────── */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
 
-/* Two-column main grid */
+/* ── Two-column main grid ────────────────────────────────────────────── */
 .main-grid {
   display: grid;
   grid-template-columns: 1fr 320px;
@@ -109,7 +140,7 @@ body {
   align-items: start;
 }
 
-/* Hero intro row */
+/* ── Hero intro row ──────────────────────────────────────────────────── */
 .hero-intro {
   display: flex;
   flex-wrap: wrap;
@@ -120,45 +151,87 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 
-/* Spotify player container */
+/* ── Spotify player container ────────────────────────────────────────── */
 .spotify-container {
   width: 100%;
   max-width: 320px;
 }
 
-/* Mobile hamburger hidden on desktop */
+/* ── Mobile hamburger — hidden on desktop ────────────────────────────── */
 .mobile-menu-btn { display: none !important; }
 
-/* ── Mobile breakpoint (≤ 768px) ─────────────────────────────────────── */
-@media (max-width: 768px) {
-  /* Show hamburger, hide desktop nav */
+/* ── Mobile breakpoint (≤ 640px) ─────────────────────────────────────── */
+@media (max-width: 640px) {
   .desktop-nav { display: none !important; }
   .mobile-menu-btn { display: block !important; }
 
-  /* Single column layout */
   .main-grid {
     grid-template-columns: 1fr;
     gap: 40px;
   }
 
-  /* Sidebar not sticky on mobile */
   .main-grid > section:last-child {
     position: static !important;
   }
 
-  /* Hero: stacked on mobile */
   .hero-intro {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  /* Spotify full width on mobile */
+  .spotify-container {
+    max-width: 100%;
+  }
+
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body {
+    font-size: 16px;
+  }
+}
+
+/* ── Tablet / Mid breakpoint (641px – 1024px) ────────────────────────── */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .desktop-nav { display: none !important; }
+  .mobile-menu-btn { display: block !important; }
+
+  .main-grid {
+    grid-template-columns: 1fr 280px;
+    gap: 40px;
+  }
+
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Backward compat ≤ 768px ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .desktop-nav { display: none !important; }
+  .mobile-menu-btn { display: block !important; }
+
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .main-grid > section:last-child {
+    position: static !important;
+  }
+
+  .hero-intro {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .spotify-container {
     max-width: 100%;
   }
 }
 
-/* ── Tablet breakpoint (769px – 1024px) ─────────────────────────────── */
+/* ── Tablet backward compat (769px – 1024px) ─────────────────────────── */
 @media (min-width: 769px) and (max-width: 1024px) {
   .main-grid {
     grid-template-columns: 1fr 280px;
@@ -166,13 +239,7 @@ body {
   }
 }
 
-
-@keyframes progress {
-  from { width: 0%; }
-  to { width: 100%; }
-}
-
-/* ── Interactive Hovers (Server Component Pages) ───────────── */
+/* ── Interactive Hovers (Server Component Pages) ──────────────────────── */
 .back-nav-link:hover {
   color: #fff !important;
 }

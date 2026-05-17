@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import MusicChatWidget from "@/components/MusicChatWidget";
@@ -9,6 +9,12 @@ export const metadata: Metadata = {
   title: "Distrik Bunyi — Musik Indonesia",
   description: "Web informasi musik yang menampilkan berita musik serta rilisan sepekan di tanah air.",
   keywords: ["musik indonesia", "indie indonesia", "rilisan baru", "distrik bunyi"],
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

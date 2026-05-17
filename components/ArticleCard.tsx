@@ -1,6 +1,9 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Article, genreAccent } from '@/lib/data';
+import ShareSheet from '@/components/ShareSheet';
 
 const typeLabel: Record<string, string> = {
   news: 'BERITA',
@@ -12,89 +15,139 @@ interface ArticleCardProps { article: Article; }
 
 export default function ArticleCard({ article }: ArticleCardProps) {
   const accent = genreAccent[article.genre] ?? '#fff';
-  return (
-    <Link
-      href={`/articles/${article.id}`}
-      style={{ textDecoration: 'none', display: 'block', height: '100%' }}
-    >
-      <article
-        style={{
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 12,
-          overflow: 'hidden',
-          cursor: 'pointer',
-          transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-        onMouseEnter={e => {
-          (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
-          (e.currentTarget as HTMLElement).style.boxShadow = `0 16px 48px rgba(0,0,0,0.4)`;
-          (e.currentTarget as HTMLElement).style.borderColor = `${accent}40`;
-        }}
-        onMouseLeave={e => {
-          (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-          (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
-        }}
-      >
-        {/* Image or gradient placeholder */}
-        <div style={{ width: '100%', aspectRatio: '16/9', background: article.imageColor, position: 'relative' }}>
-          {article.imageUrl && (
-            <img src={article.imageUrl} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
-          )}
-          {/* Gradient overlay for readability */}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)' }} />
-          <div style={{ position: 'absolute', bottom: 12, left: 12, display: 'flex', gap: 6, zIndex: 10 }}>
-            <span style={{
-              background: accent,
-              color: '#000',
-              fontWeight: 800,
-              fontSize: 9,
-              letterSpacing: '0.1em',
-              padding: '3px 8px',
-              borderRadius: 4,
-            }}>
-              {article.genre.toUpperCase()}
-            </span>
-            <span style={{
-              background: 'rgba(0,0,0,0.6)',
-              backdropFilter: 'blur(8px)',
-              color: 'rgba(255,255,255,0.7)',
-              fontWeight: 600,
-              fontSize: 9,
-              letterSpacing: '0.1em',
-              padding: '3px 8px',
-              borderRadius: 4,
-            }}>
-              {typeLabel[article.type]}
-            </span>
-          </div>
-        </div>
+  const [shareOpen, setShareOpen] = useState(false);
 
-        {/* Content */}
-        <div style={{ padding: 20, display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', marginBottom: 10 }}>
-            {article.date}
-          </p>
-          <h3 style={{ fontSize: 17, fontWeight: 800, lineHeight: 1.35, color: '#fff', marginBottom: 10, letterSpacing: '-0.02em', minHeight: 46 }}>
-            {article.title.length > 60 ? article.title.substring(0, 60) + '...' : article.title}
-          </h3>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: 16, flex: 1 }}>
-            {article.excerpt.length > 130 ? article.excerpt.substring(0, 130) + '...' : article.excerpt}
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14, marginTop: 'auto' }}>
-            <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>
-              {article.author.toUpperCase()}
-            </span>
-            <span style={{ fontSize: 10, fontWeight: 600, color: accent, letterSpacing: '0.05em' }}>
-              {article.readTime} MIN READ →
-            </span>
+  const articleUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/articles/${article.id}`
+    : `/articles/${article.id}`;
+
+  return (
+    <>
+      <Link
+        href={`/articles/${article.id}`}
+        style={{ textDecoration: 'none', display: 'block', height: '100%' }}
+      >
+        <article
+          style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: 12,
+            overflow: 'hidden',
+            cursor: 'pointer',
+            transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
+            (e.currentTarget as HTMLElement).style.boxShadow = `0 16px 48px rgba(0,0,0,0.4)`;
+            (e.currentTarget as HTMLElement).style.borderColor = `${accent}40`;
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+            (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
+          }}
+        >
+          {/* Image or gradient placeholder */}
+          <div style={{ width: '100%', aspectRatio: '16/9', background: article.imageColor, position: 'relative' }}>
+            {article.imageUrl && (
+              <img src={article.imageUrl} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
+            )}
+            {/* Gradient overlay for readability */}
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)' }} />
+            <div style={{ position: 'absolute', bottom: 12, left: 12, display: 'flex', gap: 6, zIndex: 10 }}>
+              <span style={{
+                background: accent,
+                color: '#000',
+                fontWeight: 800,
+                fontSize: 9,
+                letterSpacing: '0.1em',
+                padding: '3px 8px',
+                borderRadius: 4,
+              }}>
+                {article.genre.toUpperCase()}
+              </span>
+              <span style={{
+                background: 'rgba(0,0,0,0.6)',
+                backdropFilter: 'blur(8px)',
+                color: 'rgba(255,255,255,0.7)',
+                fontWeight: 600,
+                fontSize: 9,
+                letterSpacing: '0.1em',
+                padding: '3px 8px',
+                borderRadius: 4,
+              }}>
+                {typeLabel[article.type]}
+              </span>
+            </div>
           </div>
-        </div>
-      </article>
-    </Link>
+
+          {/* Content */}
+          <div style={{ padding: 20, display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', marginBottom: 10 }}>
+              {article.date}
+            </p>
+            <h3 style={{ fontSize: 17, fontWeight: 800, lineHeight: 1.35, color: '#fff', marginBottom: 10, letterSpacing: '-0.02em', minHeight: 46 }}>
+              {article.title.length > 60 ? article.title.substring(0, 60) + '...' : article.title}
+            </h3>
+            <p style={{
+              fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: 16, flex: 1,
+              display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+            }}>
+              {article.excerpt}
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14, marginTop: 'auto' }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>
+                {article.author.toUpperCase()}
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: accent, letterSpacing: '0.05em' }}>
+                  {article.readTime} MIN READ →
+                </span>
+                {/* Share button */}
+                <button
+                  id={`share-btn-${article.id}`}
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShareOpen(true);
+                  }}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'rgba(255,255,255,0.3)', padding: '2px 4px', borderRadius: 4,
+                    transition: 'color 0.2s',
+                    display: 'flex', alignItems: 'center',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
+                  aria-label="Bagikan artikel"
+                  title="Bagikan"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </Link>
+
+      {shareOpen && (
+        <ShareSheet
+          data={{
+            title: article.title,
+            excerpt: article.excerpt,
+            url: articleUrl,
+            genre: article.genre,
+            imageUrl: article.imageUrl,
+          }}
+          onClose={() => setShareOpen(false)}
+        />
+      )}
+    </>
   );
 }
