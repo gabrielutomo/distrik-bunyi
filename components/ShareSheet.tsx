@@ -70,24 +70,49 @@ export default function ShareSheet({ data, onClose }: ShareSheetProps) {
       // Dynamically import html2canvas only on demand
       const { default: html2canvas } = await import('html2canvas');
       if (!previewRef.current) return;
-      const canvas = await html2canvas(previewRef.current, { scale: 2, useCORS: true, backgroundColor: null });
+      
+      const canvas = await html2canvas(previewRef.current, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: cfg.bg,
+        logging: false,
+      });
+      
       canvas.toBlob(async (blob) => {
         if (!blob) return;
         const file = new File([blob], 'distrikbunyi-story.png', { type: 'image/png' });
-        const sharePayload = { files: [file], title: 'Distrik Bunyi' };
-        const nav = navigator as Navigator & { canShare?: (d: unknown) => boolean; share?: (d: unknown) => Promise<void> };
-        if (nav.canShare?.(sharePayload)) {
-          await nav.share?.(sharePayload);
+        
+        // Check if Web Share API is available
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'Distrik Bunyi',
+              text: data.title,
+            });
+          } catch (err) {
+            // User cancelled or error - fallback to download
+            downloadImage(blob);
+          }
         } else {
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = 'distrikbunyi-story.png';
-          a.click();
+          // Fallback: download image
+          downloadImage(blob);
         }
-      });
+      }, 'image/png');
     } catch (err) {
       console.error('Share IG error:', err);
     }
+  };
+
+  const downloadImage = (blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'distrikbunyi-story.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -233,33 +258,52 @@ export default function ShareSheet({ data, onClose }: ShareSheetProps) {
             <div
               className="story-preview"
               ref={previewRef}
-              style={{ background: cfg.bg, padding: 16, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+              style={{ 
+                background: cfg.bg, 
+                padding: '24px 16px', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                justifyContent: 'space-between',
+                gap: '16px',
+              }}
             >
               {/* Top brand */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <div style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.accent, boxShadow: `0 0 8px ${cfg.accent}88` }} />
-                <span style={{ fontSize: 7, fontWeight: 900, color: cfg.text, letterSpacing: '-0.02em' }}>DISTRIK BUNYI</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: cfg.accent, boxShadow: `0 0 12px ${cfg.accent}88` }} />
+                <span style={{ fontSize: 9, fontWeight: 900, color: cfg.text, letterSpacing: '-0.02em' }}>DISTRIK BUNYI</span>
               </div>
-              {/* Image area */}
-              {data.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={data.imageUrl} alt={data.title} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: 6 }} />
-              ) : (
-                <div style={{ width: '100%', aspectRatio: '16/9', background: cfg.accent + '30', borderRadius: 6 }} />
-              )}
-              {/* Genre badge */}
-              <div>
+              
+              {/* Content area */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {/* Image area */}
+                {data.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={data.imageUrl} alt={data.title} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: 8 }} />
+                ) : (
+                  <div style={{ width: '100%', aspectRatio: '16/9', background: cfg.accent + '30', borderRadius: 8 }} />
+                )}
+                
+                {/* Genre badge */}
                 <span style={{
-                  fontSize: 6, fontWeight: 800, padding: '2px 6px', borderRadius: 3,
+                  fontSize: 7, fontWeight: 800, padding: '3px 8px', borderRadius: 4,
                   background: cfg.accent, color: cfg.accentText, letterSpacing: '0.08em',
-                  display: 'inline-block', marginBottom: 6,
+                  display: 'inline-block', alignSelf: 'flex-start',
                 }}>
                   {data.genre.toUpperCase()}
                 </span>
-                <p style={{ fontSize: 8, fontWeight: 800, color: cfg.text, lineHeight: 1.3, marginBottom: 6 }}>
-                  {data.title.length > 70 ? data.title.substring(0, 70) + '…' : data.title}
+                
+                {/* Title */}
+                <p style={{ fontSize: 10, fontWeight: 800, color: cfg.text, lineHeight: 1.3, marginTop: 4 }}>
+                  {data.title.length > 80 ? data.title.substring(0, 80) + '…' : data.title}
                 </p>
-                <p style={{ fontSize: 6, color: cfg.text, opacity: 0.5, letterSpacing: '0.1em' }}>
+              </div>
+              
+              {/* Footer */}
+              <div style={{ borderTop: `1px solid ${cfg.text}20`, paddingTop: 8 }}>
+                <p style={{ fontSize: 7, color: cfg.text, opacity: 0.6, letterSpacing: '0.1em', fontWeight: 600 }}>
+                  Baca selengkapnya →
+                </p>
+                <p style={{ fontSize: 7, color: cfg.text, opacity: 0.5, letterSpacing: '0.1em', marginTop: 2 }}>
                   distrikbunyi.id
                 </p>
               </div>
