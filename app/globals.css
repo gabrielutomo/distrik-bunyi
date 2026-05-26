@@ -133,6 +133,12 @@ body {
   align-items: stretch;
 }
 
+.news-grid > * {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 /* ── Two-column main grid ────────────────────────────────────────────── */
 .main-grid {
   display: grid;
@@ -160,6 +166,29 @@ body {
 
 /* ── Mobile hamburger — hidden on desktop ────────────────────────────── */
 .mobile-menu-btn { display: none !important; }
+
+/* ── Navbar tabs styling ─────────────────────────────────────────────── */
+.nav-tabs {
+  display: flex;
+  width: auto;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-tab {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.nav-tab.active {
+  border: 1px solid #C8FF00;
+  color: #C8FF00;
+}
 
 /* ── Mobile breakpoint (≤ 640px) ─────────────────────────────────────── */
 @media (max-width: 640px) {
@@ -190,6 +219,27 @@ body {
 
   body {
     font-size: 16px;
+  }
+
+  /* Hero title responsive */
+  h1 {
+    font-size: clamp(28px, 8vw, 48px) !important;
+  }
+
+  /* Minimum tap target 44x44px */
+  button, a, .share-btn, .nav-tab {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Navbar horizontal scroll */
+  nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar {
+    display: none;
   }
 }
 

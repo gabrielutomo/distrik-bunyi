@@ -12,6 +12,7 @@ const tabs: { label: string; value: Genre | null }[] = [
   { label: 'INDIE',       value: 'indie'       },
   { label: 'RAP',         value: 'rap'         },
   { label: 'ALTERNATIVE', value: 'alternative' },
+  { label: 'ID MUSIC',    value: null          },
 ];
 
 export default function Header({ activeGenre, onGenreChange }: HeaderProps) {
@@ -46,43 +47,40 @@ export default function Header({ activeGenre, onGenreChange }: HeaderProps) {
         {/* Logo */}
         <button
           onClick={() => { onGenreChange(null); setMenuOpen(false); }}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span
-              className="live-dot"
-              style={{ width: 8, height: 8, borderRadius: '50%', background: accent, display: 'inline-block', transition: 'background 0.4s' }}
-            />
-            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontSize: 18, letterSpacing: '-0.04em', color: 'var(--text-primary)', transition: 'color 0.3s' }}>
-              DISTRIK BUNYI
-            </span>
-          </div>
-          <span style={{ fontFamily: 'Inter, monospace', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.15em', marginTop: 1, transition: 'color 0.3s' }}>
-            ID MUSIC
+          <span
+            className="live-dot"
+            style={{ width: 8, height: 8, borderRadius: '50%', background: accent, display: 'inline-block', transition: 'background 0.4s' }}
+          />
+          <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontSize: 18, letterSpacing: '-0.04em', color: 'var(--text-primary)', transition: 'color 0.3s' }}>
+            DISTRIK BUNYI
           </span>
         </button>
 
         {/* Desktop Genre Nav & Theme Toggle */}
         <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <nav style={{ display: 'flex', gap: 4 }}>
+          <nav className="nav-tabs" style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
             {tabs.map(tab => {
-              const isActive = activeGenre === tab.value;
-              const color = tab.value ? genreAccent[tab.value] : '#fff';
+              const isActive = activeGenre === tab.value && tab.label !== 'ID MUSIC';
+              const color = tab.value && tab.label !== 'ID MUSIC' ? genreAccent[tab.value] : '#C8FF00';
               return (
                 <button
                   key={tab.label}
-                  onClick={() => onGenreChange(tab.value)}
+                  onClick={() => tab.label !== 'ID MUSIC' && onGenreChange(tab.value)}
+                  className="nav-tab"
                   style={{
                     fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700,
-                    fontSize: 11,
-                    letterSpacing: '0.08em',
+                    fontWeight: 600,
+                    fontSize: 13,
+                    letterSpacing: '0.5px',
                     padding: '6px 14px',
                     borderRadius: 6,
                     border: isActive ? `1px solid ${color}` : '1px solid transparent',
-                    background: isActive ? `${color}20` : 'transparent',
+                    background: 'transparent',
                     color: isActive ? color : 'var(--text-secondary)',
-                    cursor: 'pointer',
+                    cursor: tab.label !== 'ID MUSIC' ? 'pointer' : 'default',
+                    textTransform: 'uppercase',
                     transition: 'all 0.2s ease, color 0.3s',
                   }}
                 >
