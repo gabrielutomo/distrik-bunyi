@@ -52,28 +52,30 @@ export default async function ArticlePage({
   const accent = genreAccent[article.genre as keyof typeof genreAccent] ?? '#fff';
 
   return (
-    <div style={{ background: '#080808', minHeight: '100vh', color: '#f0f0f0', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', color: 'var(--text-primary)', fontFamily: 'Inter, system-ui, sans-serif', transition: 'background 0.3s, color 0.3s' }}>
       {/* Back nav */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(8,8,8,0.9)',
+        background: 'var(--bg-primary)',
+        opacity: 0.95,
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        borderBottom: '1px solid var(--border)',
+        transition: 'background 0.3s, border-color 0.3s',
       }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', gap: 16 }}>
           <Link
             href="/"
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              color: 'rgba(255,255,255,0.45)', textDecoration: 'none',
+              color: 'var(--text-secondary)', textDecoration: 'none',
               fontSize: 12, fontWeight: 700, letterSpacing: '0.08em',
               transition: 'color 0.2s',
             }}
           >
             ← DISTRIK BUNYI
           </Link>
-          <span style={{ color: 'rgba(255,255,255,0.15)', fontSize: 12 }}>/</span>
+          <span style={{ color: 'var(--border)', fontSize: 12 }}>/</span>
           <span style={{
             fontSize: 10, fontWeight: 800, letterSpacing: '0.12em',
             background: accent, color: '#000',
@@ -83,7 +85,8 @@ export default async function ArticlePage({
           </span>
           <span style={{
             fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
-            color: 'rgba(255,255,255,0.25)',
+            color: 'var(--text-muted)',
+            transition: 'color 0.3s',
           }}>
             {typeLabel[article.type]}
           </span>
@@ -168,28 +171,28 @@ export default async function ArticlePage({
 
         {/* Sidebar */}
         <aside style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
-          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 24 }}>
-            <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>PENULIS</p>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24, transition: 'background 0.3s, border-color 0.3s' }}>
+            <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'var(--text-muted)', marginBottom: 16, transition: 'color 0.3s' }}>PENULIS</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
               <div style={{ width: 48, height: 48, borderRadius: '50%', background: `linear-gradient(135deg, ${accent}40, ${accent}10)`, border: `1px solid ${accent}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 900, color: accent }}>
                 {article.author.charAt(0)}
               </div>
               <div>
-                <p style={{ fontWeight: 800, fontSize: 15, color: '#fff' }}>{article.author}</p>
-                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>Kontributor</p>
+                <p style={{ fontWeight: 800, fontSize: 15, color: 'var(--text-primary)', transition: 'color 0.3s' }}>{article.author}</p>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2, transition: 'color 0.3s' }}>Kontributor</p>
               </div>
             </div>
           </div>
 
           {related && related.length > 0 && (
             <div>
-              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>ARTIKEL TERKAIT</p>
+              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'var(--text-muted)', marginBottom: 16, transition: 'color 0.3s' }}>ARTIKEL TERKAIT</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {related.map(rel => (
                   <Link key={rel.id} href={`/articles/${rel.id}`} style={{ textDecoration: 'none' }}>
-                    <div style={{ padding: '14px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10 }}>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.4, marginBottom: 6 }}>{rel.title}</p>
-                      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{rel.date} · {rel.read_time} min read</p>
+                    <div style={{ padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, transition: 'background 0.3s, border-color 0.3s' }}>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.4, marginBottom: 6, transition: 'color 0.3s' }}>{rel.title}</p>
+                      <p style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, transition: 'color 0.3s' }}>{rel.date} · {rel.read_time} min read</p>
                     </div>
                   </Link>
                 ))}
@@ -199,10 +202,10 @@ export default async function ArticlePage({
         </aside>
       </main>
 
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '40px 24px' }}>
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '40px 24px', transition: 'border-color 0.3s' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <Link href="/" style={{ textDecoration: 'none' }}><span style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.04em', color: '#fff' }}>DISTRIK BUNYI</span></Link>
-          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)', fontWeight: 600 }}>STAY LOUD, STAY ARCHIVED.</span>
+          <Link href="/" style={{ textDecoration: 'none' }}><span style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.04em', color: 'var(--text-primary)', transition: 'color 0.3s' }}>DISTRIK BUNYI</span></Link>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, transition: 'color 0.3s' }}>STAY LOUD, STAY ARCHIVED.</span>
         </div>
       </footer>
     </div>

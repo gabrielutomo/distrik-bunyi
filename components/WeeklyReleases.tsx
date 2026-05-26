@@ -8,15 +8,15 @@ export default function WeeklyReleases({ releases }: WeeklyReleasesProps) {
   return (
     <aside style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)' }}>
+        <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', color: 'var(--text-muted)', transition: 'color 0.3s' }}>
           RILISAN BARU DEEZER
         </span>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+        <div style={{ flex: 1, height: 1, background: 'var(--border)', transition: 'background-color 0.3s' }} />
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         {releases.length === 0 && (
-          <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12, textAlign: 'center', padding: 32, fontStyle: 'italic' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: 12, textAlign: 'center', padding: 32, fontStyle: 'italic', transition: 'color 0.3s' }}>
             Memuat rilisan teranyar...
           </p>
         )}
@@ -30,12 +30,12 @@ export default function WeeklyReleases({ releases }: WeeklyReleasesProps) {
                 padding: '12px 14px', borderRadius: 10,
                 background: 'transparent', transition: 'background 0.2s'
               }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-secondary)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
               {/* Number */}
-              <span style={{ fontSize: 11, fontWeight: 800, color: 'rgba(255,255,255,0.2)', minWidth: 18, textAlign: 'right' }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', minWidth: 18, textAlign: 'right', transition: 'color 0.3s' }}>
                 {String(i + 1).padStart(2, '0')}
               </span>
 
@@ -53,10 +53,10 @@ export default function WeeklyReleases({ releases }: WeeklyReleasesProps) {
 
               {/* Info */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontWeight: 700, fontSize: 14, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', letterSpacing: '-0.01em' }}>
+                <p style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', letterSpacing: '-0.01em', transition: 'color 0.3s' }}>
                   {r.title}
                 </p>
-                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <p style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', transition: 'color 0.3s' }}>
                   {r.artist}
                 </p>
               </div>

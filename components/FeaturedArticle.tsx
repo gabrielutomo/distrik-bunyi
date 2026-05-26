@@ -16,7 +16,7 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
         borderRadius: 16,
         overflow: 'hidden',
         background: article.imageColor,
-        border: '1px solid rgba(255,255,255,0.08)',
+        border: '1px solid var(--border)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-end',

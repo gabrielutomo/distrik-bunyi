@@ -8,10 +8,10 @@ export default function LocalReleasesSection({ releases }: LocalReleasesSectionP
     <section style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       {/* Section header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <h2 style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>
+        <h2 style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', color: 'var(--text-muted)', whiteSpace: 'nowrap', transition: 'color 0.3s' }}>
           RILISAN TERBARU
         </h2>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+        <div style={{ flex: 1, height: 1, background: 'var(--border)', transition: 'background-color 0.3s' }} />
       </div>
 
       {/* Grid */}
@@ -27,21 +27,22 @@ export default function LocalReleasesSection({ releases }: LocalReleasesSectionP
             <div
               key={release.id}
               style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
                 borderRadius: 14,
                 overflow: 'hidden',
                 cursor: 'pointer',
-                transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
+                transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.3s, border-color 0.3s',
               }}
               onMouseEnter={e => {
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
                 (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
                 (e.currentTarget as HTMLElement).style.borderColor = `${accent}50`;
-                (e.currentTarget as HTMLElement).style.boxShadow = `0 12px 40px rgba(0,0,0,0.5)`;
+                (e.currentTarget as HTMLElement).style.boxShadow = isLight ? `0 10px 24px rgba(26,24,20,0.06)` : `0 12px 40px rgba(0,0,0,0.5)`;
               }}
               onMouseLeave={e => {
                 (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)';
                 (e.currentTarget as HTMLElement).style.boxShadow = 'none';
               }}
             >
@@ -70,10 +71,10 @@ export default function LocalReleasesSection({ releases }: LocalReleasesSectionP
                 <p style={{ fontSize: 11, fontWeight: 700, color: accent, letterSpacing: '0.05em', marginBottom: 6 }}>
                   {release.artist.toUpperCase()}
                 </p>
-                <h4 style={{ fontWeight: 800, fontSize: 16, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <h4 style={{ fontWeight: 800, fontSize: 16, color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', transition: 'color 0.3s' }}>
                   {release.title}
                 </h4>
-                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: (release as any).deezerId ? 16 : 0 }}>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: (release as any).deezerId ? 16 : 0, transition: 'color 0.3s' }}>
                   {release.releaseDate}
                 </p>
                 {(release as any).deezerId && (

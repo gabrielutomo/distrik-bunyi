@@ -116,7 +116,7 @@ export default function HomeClient({ deezerReleases, articles, weeklyReleases, u
   };
 
   return (
-    <div style={{ background: '#080808', minHeight: '100vh', color: '#f0f0f0', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', color: 'var(--text-primary)', fontFamily: 'Inter, system-ui, sans-serif', transition: 'background 0.3s, color 0.3s' }}>
       {/* Splash Screen */}
       <SplashScreen />
 
@@ -171,16 +171,16 @@ export default function HomeClient({ deezerReleases, articles, weeklyReleases, u
         <div className="fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
           <div className="hero-intro">
             <div>
-              <h1 style={{ fontWeight: 900, fontSize: 'clamp(38px, 8vw, 90px)', letterSpacing: '-0.05em', lineHeight: 1, color: '#fff', textTransform: 'uppercase', marginBottom: 20 }}>
+              <h1 style={{ fontWeight: 900, fontSize: 'clamp(38px, 8vw, 90px)', letterSpacing: '-0.05em', lineHeight: 1, color: 'var(--text-primary)', textTransform: 'uppercase', marginBottom: 20, transition: 'color 0.3s' }}>
                 {activeGenre ? genreLabel[activeGenre].title : 'DISTRIK BUNYI'}
               </h1>
-              <p style={{ fontSize: 'clamp(14px, 2vw, 18px)', color: 'rgba(255,255,255,0.5)', fontWeight: 500, maxWidth: 600, lineHeight: 1.5 }}>
+              <p style={{ fontSize: 'clamp(14px, 2vw, 18px)', color: 'var(--text-secondary)', fontWeight: 500, maxWidth: 600, lineHeight: 1.5, transition: 'color 0.3s' }}>
                 {activeGenre ? genreLabel[activeGenre].sub : 'Website informasi musik yang menyajikan berita-berita musik serta rilisan sepekan di tanah air'}
               </p>
             </div>
             {/* Native Player Custom - 100% Anti AdBlocker */}
             <div className="spotify-container">
-              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)', marginBottom: 8 }}>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', color: 'var(--text-muted)', marginBottom: 8, transition: 'color 0.3s' }}>
                 LISTEN NOW
               </p>
               {listenNowData ? (
@@ -188,13 +188,13 @@ export default function HomeClient({ deezerReleases, articles, weeklyReleases, u
                   onClick={togglePlay}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 16,
-                    background: 'rgba(255,255,255,0.03)',
-                    padding: 16, borderRadius: 12, border: isPlaying ? `1px solid ${accent}` : '1px solid rgba(255,255,255,0.1)',
-                    transition: 'all 0.3s ease', cursor: 'pointer',
+                    background: 'var(--bg-card)',
+                    padding: 16, borderRadius: 12, border: isPlaying ? `1px solid ${accent}` : '1px solid var(--border)',
+                    transition: 'all 0.3s ease, background 0.3s, border-color 0.3s', cursor: 'pointer',
                     position: 'relative', overflow: 'hidden'
                   }}
-                  onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                  onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                  onMouseOver={(e) => { e.currentTarget.style.background = 'var(--bg-secondary)' }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = 'var(--bg-card)' }}
                 >
                   {/* Progress Bar background simulasi */}
                   {isPlaying && (
@@ -226,10 +226,10 @@ export default function HomeClient({ deezerReleases, articles, weeklyReleases, u
                         {isPlaying ? 'NOW PLAYING' : 'CLICK TO PREVIEW'}
                       </p>
                     </div>
-                    <h4 style={{ fontSize: 15, color: '#fff', fontWeight: 700, marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <h4 style={{ fontSize: 15, color: 'var(--text-primary)', fontWeight: 700, marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', transition: 'color 0.3s' }}>
                       {listenNowData.title}
                     </h4>
-                    <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <p style={{ fontSize: 12, color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', transition: 'color 0.3s' }}>
                       {listenNowData.artist}
                     </p>
                   </div>
@@ -252,7 +252,7 @@ export default function HomeClient({ deezerReleases, articles, weeklyReleases, u
                 </div>
               )}
               {listenNowData && (
-                <a href={listenNowData.url} target="_blank" rel="noopener noreferrer" style={{ display: 'block', textAlign: 'right', marginTop: 8, fontSize: 10, color: 'rgba(255,255,255,0.2)', textDecoration: 'none', fontWeight: 600 }}>
+                <a href={listenNowData.url} target="_blank" rel="noopener noreferrer" style={{ display: 'block', textAlign: 'right', marginTop: 8, fontSize: 10, color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, transition: 'color 0.3s' }}>
                   FULL VERSION ON DEEZER ↗
                 </a>
               )}
@@ -268,12 +268,12 @@ export default function HomeClient({ deezerReleases, articles, weeklyReleases, u
           {/* Main articles */}
           <section className="fade-up-1" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <h2 style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)' }}>
+              <h2 style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', color: 'var(--text-muted)', transition: 'color 0.3s' }}>
                 TERBARU
               </h2>
-              <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+              <div style={{ flex: 1, height: 1, background: 'var(--border)', transition: 'background-color 0.3s' }} />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20, alignItems: 'stretch' }}>
+            <div className="news-grid">
               {latestArticles.map(a => <ArticleCard key={a.id} article={a} />)}
               {latestArticles.length === 0 && !featured && (
                 <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: 80, color: 'rgba(255,255,255,0.2)', fontStyle: 'italic' }}>
@@ -302,44 +302,44 @@ export default function HomeClient({ deezerReleases, articles, weeklyReleases, u
       </main>
 
       {/* ── Footer ── */}
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.07)', marginTop: 80, padding: '64px 24px 40px' }}>
+      <footer style={{ borderTop: '1px solid var(--border)', marginTop: 80, padding: '64px 24px 40px', transition: 'border-color 0.3s' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 48 }}>
           <div style={{ maxWidth: 360 }}>
-            <h3 style={{ fontWeight: 900, fontSize: 28, letterSpacing: '-0.04em', color: '#fff', marginBottom: 16 }}>DISTRIK BUNYI</h3>
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.7 }}>
+            <h3 style={{ fontWeight: 900, fontSize: 28, letterSpacing: '-0.04em', color: 'var(--text-primary)', marginBottom: 16, transition: 'color 0.3s' }}>DISTRIK BUNYI</h3>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.7, transition: 'color 0.3s' }}>
               Platform kurasi &amp; arsip musik independen, rap, dan alternatif Indonesia. Untuk kamu yang dengerin musik bukan cuma karena fomo.
             </p>
           </div>
           <div style={{ display: 'flex', gap: 64 }}>
             <div>
-              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.2)', marginBottom: 20 }}>NAVIGASI</p>
+              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'var(--text-muted)', marginBottom: 20, transition: 'color 0.3s' }}>NAVIGASI</p>
               {['Berita', 'Rilisan', 'Underrated', 'Tentang'].map(l => (
-                <p key={l} style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: 12, cursor: 'pointer' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}
+                <p key={l} style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 12, cursor: 'pointer', transition: 'color 0.2s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
                 >{l}</p>
               ))}
             </div>
             <div>
-              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.2)', marginBottom: 20 }}>SKENA</p>
+              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.2em', color: 'var(--text-muted)', marginBottom: 20, transition: 'color 0.3s' }}>SKENA</p>
               {[
                 { label: 'Indie', genre: 'indie' as Genre, color: '#c8ff00' },
                 { label: 'Rap', genre: 'rap' as Genre, color: '#ff2d6b' },
                 { label: 'Alternative', genre: 'alternative' as Genre, color: '#9b5cf6' },
               ].map(item => (
                 <p key={item.label}
-                  style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: 12, cursor: 'pointer', transition: 'color 0.2s' }}
+                  style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 12, cursor: 'pointer', transition: 'color 0.2s' }}
                   onClick={() => setActiveGenre(item.genre)}
                   onMouseEnter={e => (e.currentTarget.style.color = item.color)}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
                 >{item.label}</p>
               ))}
             </div>
           </div>
         </div>
-        <div style={{ maxWidth: 1280, margin: '48px auto 0', paddingTop: 24, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)', fontWeight: 600 }}>© 2026 Gabriel Adetya Utomo</span>
-          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)', fontWeight: 600 }}>STAY LOUD, STAY ARCHIVED.</span>
+        <div style={{ maxWidth: 1280, margin: '48px auto 0', paddingTop: 24, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, transition: 'border-color 0.3s' }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, transition: 'color 0.3s' }}>© 2026 Gabriel Adetya Utomo</span>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, transition: 'color 0.3s' }}>STAY LOUD, STAY ARCHIVED.</span>
         </div>
       </footer>
     </div>
