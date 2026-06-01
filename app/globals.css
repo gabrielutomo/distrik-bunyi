@@ -207,6 +207,7 @@ body {
   .hero-intro {
     flex-direction: column;
     align-items: flex-start;
+    padding-bottom: 16px;
   }
 
   .spotify-container {
@@ -221,9 +222,26 @@ body {
     font-size: 16px;
   }
 
-  /* Hero title responsive */
+  /* Hero title responsive - lebih kecil di mobile */
   h1 {
-    font-size: clamp(28px, 8vw, 48px) !important;
+    font-size: clamp(32px, 10vw, 48px) !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Hero description lebih kecil */
+  .hero-intro p {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Listen Now player lebih compact */
+  .spotify-container {
+    margin-top: 16px;
+  }
+
+  /* Featured article lebih compact */
+  main > div:first-child {
+    gap: 24px !important;
   }
 
   /* Minimum tap target 44x44px */
@@ -240,6 +258,16 @@ body {
   }
   nav::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Padding adjustment untuk mobile */
+  main {
+    padding: 24px 16px !important;
+  }
+
+  /* Section gaps lebih kecil */
+  main > div {
+    gap: 40px !important;
   }
 }
 
