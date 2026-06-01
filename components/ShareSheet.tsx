@@ -117,7 +117,7 @@ export default function ShareSheet({ data, onClose }: ShareSheetProps) {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{__html: `
         .share-overlay {
           position: fixed; inset: 0;
           background: rgba(0,0,0,0.7);
@@ -215,7 +215,7 @@ export default function ShareSheet({ data, onClose }: ShareSheetProps) {
           opacity: 1;
           transform: translateX(-50%) translateY(0);
         }
-      `}</style>
+      `}} />
 
       {/* Backdrop */}
       <div className={`share-overlay ${open ? 'open' : ''}`} onClick={handleClose} />
