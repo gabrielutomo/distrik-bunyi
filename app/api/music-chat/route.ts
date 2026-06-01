@@ -41,19 +41,24 @@ interface ChatMessage {
 export async function POST(request: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
+    console.error('GEMINI_API_KEY not found in environment');
+    return NextResponse.json({ 
+      error: 'Kurator AI sedang offline. Silakan coba lagi nanti.',
+      details: 'API key not configured' 
+    }, { status: 500 });
   }
 
   let body: { history?: ChatMessage[]; message?: string };
   try {
     body = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+  } catch (e) {
+    console.error('Invalid JSON body:', e);
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
   const { history = [], message } = body;
   if (!message || typeof message !== 'string') {
-    return NextResponse.json({ error: 'Missing message' }, { status: 400 });
+    return NextResponse.json({ error: 'Pesan tidak boleh kosong' }, { status: 400 });
   }
 
   const contents: ChatMessage[] = [
@@ -66,10 +71,11 @@ export async function POST(request: NextRequest) {
     contents,
     generationConfig: {
       temperature: 0.85,
+      maxOutputTokens: 500,
     },
   };
 
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
 
   try {
     const res = await fetch(geminiUrl, {
@@ -80,17 +86,29 @@ export async function POST(request: NextRequest) {
 
     if (!res.ok) {
       const err = await res.text();
-      console.error('Gemini API error:', err);
-      return NextResponse.json({ error: 'Gemini API error' }, { status: 502 });
+      console.error('Gemini API error:', res.status, err);
+      
+      if (res.status === 429) {
+        return NextResponse.json({ 
+          error: 'Kurator AI sedang sibuk. Tunggu sebentar ya!' 
+        }, { status: 429 });
+      }
+      
+      return NextResponse.json({ 
+        error: 'Kurator AI sedang istirahat. Coba lagi nanti ya!' 
+      }, { status: 502 });
     }
 
     const data = await res.json();
     const text: string =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ?? 
+      'Maaf, aku lagi bingung. Coba tanya lagi ya!';
 
     return NextResponse.json({ reply: text });
   } catch (err) {
     console.error('Fetch error:', err);
-    return NextResponse.json({ error: 'Network error' }, { status: 503 });
+    return NextResponse.json({ 
+      error: 'Koneksi ke Kurator AI terputus. Coba lagi ya!' 
+    }, { status: 503 });
   }
 }
