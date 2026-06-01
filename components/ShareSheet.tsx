@@ -39,6 +39,18 @@ export default function ShareSheet({ data, onClose }: ShareSheetProps) {
     return () => clearTimeout(t);
   }, []);
 
+  // Lock body scroll when sheet is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
   const handleClose = () => {
     setOpen(false);
     setTimeout(onClose, 400);
