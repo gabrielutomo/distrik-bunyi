@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     },
   };
 
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent`;
+  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent`;
 
   try {
     const res = await fetch(geminiUrl, {
