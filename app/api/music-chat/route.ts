@@ -75,43 +75,58 @@ export async function POST(request: NextRequest) {
     },
   };
 
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent`;
+  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`;
 
-  try {
-    const res = await fetch(geminiUrl, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey
-      },
-      body: JSON.stringify(payload),
-    });
+  // Retry logic for high demand
+  let lastError: any = null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(geminiUrl, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        },
+        body: JSON.stringify(payload),
+      });
 
-    if (!res.ok) {
-      const err = await res.text();
-      console.error('Gemini API error:', res.status, err);
-      
-      if (res.status === 429) {
-        return NextResponse.json({ 
-          error: 'Kurator AI sedang sibuk. Tunggu sebentar ya!' 
-        }, { status: 429 });
+      if (!res.ok) {
+        const err = await res.text();
+        console.error(`Gemini API error (attempt ${attempt}):`, res.status, err);
+        
+        // If 503 (high demand), retry after delay
+        if (res.status === 503 && attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // 1s, 2s delay
+          continue;
+        }
+        
+        if (res.status === 429) {
+          return NextResponse.json({ 
+            error: 'Kurator AI sedang sibuk. Tunggu sebentar ya!' 
+          }, { status: 429 });
+        }
+        
+        lastError = err;
+        break;
       }
-      
-      return NextResponse.json({ 
-        error: 'Kurator AI sedang istirahat. Coba lagi nanti ya!' 
-      }, { status: 502 });
+
+      const data = await res.json();
+      const text: string =
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ?? 
+        'Maaf, aku lagi bingung. Coba tanya lagi ya!';
+
+      return NextResponse.json({ reply: text });
+    } catch (err) {
+      console.error(`Fetch error (attempt ${attempt}):`, err);
+      lastError = err;
+      if (attempt < 3) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      }
     }
-
-    const data = await res.json();
-    const text: string =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ?? 
-      'Maaf, aku lagi bingung. Coba tanya lagi ya!';
-
-    return NextResponse.json({ reply: text });
-  } catch (err) {
-    console.error('Fetch error:', err);
-    return NextResponse.json({ 
-      error: 'Koneksi ke Kurator AI terputus. Coba lagi ya!' 
-    }, { status: 503 });
   }
+  
+  // All retries failed
+  return NextResponse.json({ 
+    error: 'Kurator AI lagi overload. Coba lagi dalam beberapa saat ya!' 
+  }, { status: 503 });
 }
